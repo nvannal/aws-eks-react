@@ -1,45 +1,42 @@
-apiVersion: apps/latest
 kind: Deployment
+apiVersion: apps/latest
 metadata:
-  creationTimestamp: null
-  labels:
-    app: aws-eks-react
   name: aws-eks-react
 spec:
   replicas: 2
   selector:
     matchLabels:
       app: aws-eks-react
-  strategy: {}
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: aws-eks-react
     spec:
       containers:
-      - image: 550369315701.dkr.ecr.ap-south-1.amazonaws.com/rcm-repo/react-project-7:latest
-        name: webapp
+      - name: aws-eks-react
+        image: 550369315701.dkr.ecr.ap-south-1.amazonaws.com/rcm-repo/react-project-7:latest
         imagePullPolicy: Always
-        resources: {}
         ports:
-          - containerPort: 3080 
-status: {}
-
-
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "300m"
+          limits:
+            memory: "200Mi"
+            cpu: "600m"
+      restartPolicy: Always
 ---
-
-
-apiVersion: latest
 kind: Service
+apiVersion: v1
 metadata:
   name: aws-eks-react
-  labels:
-    run: aws-eks-react
 spec:
+  type: NodePort
   ports:
-  - port: 3080
-    protocol: TCP
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      nodePort: 31000
   selector:
     app: aws-eks-react
-  type: NodePort
